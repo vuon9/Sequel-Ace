@@ -312,6 +312,7 @@ extern NSString *SPDisplayTableViewColumnTypes;
 extern NSString *SPDisplayCommentsInTablesList;
 extern NSString *SPCustomQueryMaxHistoryItems;
 extern NSString *SPAppearance;
+extern NSString *SPEffectiveAppearance;
 
 // Tables Prefpane
 extern NSString *SPReloadAfterAddingRow;
@@ -349,6 +350,7 @@ extern NSString *SPKeepAliveInterval;
 // Editor Prefpane
 extern NSString *SPCustomQueryEnableSyntaxHighlighting;
 extern NSString *SPCustomQueryEditorFont;
+
 extern NSString *SPCustomQueryEditorTextColor;
 extern NSString *SPCustomQueryEditorBackgroundColor;
 extern NSString *SPCustomQueryEditorCaretColor;
@@ -360,6 +362,19 @@ extern NSString *SPCustomQueryEditorBacktickColor;
 extern NSString *SPCustomQueryEditorVariableColor;
 extern NSString *SPCustomQueryEditorHighlightQueryColor;
 extern NSString *SPCustomQueryEditorSelectionColor;
+
+extern NSString *SPCustomQueryEditorDarkModeTextColor;
+extern NSString *SPCustomQueryEditorDarkModeBackgroundColor;
+extern NSString *SPCustomQueryEditorDarkModeCaretColor;
+extern NSString *SPCustomQueryEditorDarkModeCommentColor;
+extern NSString *SPCustomQueryEditorDarkModeSQLKeywordColor;
+extern NSString *SPCustomQueryEditorDarkModeNumericColor;
+extern NSString *SPCustomQueryEditorDarkModeQuoteColor;
+extern NSString *SPCustomQueryEditorDarkModeBacktickColor;
+extern NSString *SPCustomQueryEditorDarkModeVariableColor;
+extern NSString *SPCustomQueryEditorDarkModeHighlightQueryColor;
+extern NSString *SPCustomQueryEditorDarkModeSelectionColor;
+
 extern NSString *SPCustomQueryAutoIndent;
 extern NSString *SPCustomQueryAutoPairCharacters;
 extern NSString *SPCustomQueryAutoUppercaseKeywords;

@@ -1343,11 +1343,6 @@
                                                                                                     <size key="maxSize" width="100000" height="10000000"/>
                                                                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                                     <connections>
-                                                                                                        <binding destination="1907" name="textColor" keyPath="values.CustomQueryEditorTextColor" id="8258">
-                                                                                                            <dictionary key="options">
-                                                                                                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                                                                            </dictionary>
-                                                                                                        </binding>
                                                                                                         <outlet property="customQueryInstance" destination="134" id="8259"/>
                                                                                                         <outlet property="delegate" destination="134" id="8260"/>
                                                                                                         <outlet property="scrollView" destination="8251" id="8255"/>
