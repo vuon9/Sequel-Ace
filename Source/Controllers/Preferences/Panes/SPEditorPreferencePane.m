@@ -115,6 +115,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 	[NSColor setIgnoresAlpha:NO];
 	
     NSTableColumn *column = [[colorSettingTableView tableColumns] safeObjectAtIndex:1];
+  NSTableColumn *columnDarkMode = [[colorSettingTableViewDarkMode tableColumns] safeObjectAtIndex:1];
 	NSTextFieldCell *textCell = [[NSTextFieldCell alloc] init];
 	
 	[textCell setFont:[NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorFont]]];
@@ -126,8 +127,18 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 	[colorCell setAction:@selector(colorClick:)];
 	
 	[column setDataCell:colorCell];
+  [columnDarkMode setDataCell:colorCell];
 
+  if (@available(macOS 10.14, *)) {
+    [colorSettingTableView setBackgroundColor:[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0]];
+    [colorSettingTableViewDarkMode setBackgroundColor:[NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0]];
+    
+    // Real dark background
+//    [colorSettingTableViewDarkMode setBackgroundColor:[NSColor colorWithCalibratedRed:0.3 green:0.3 blue:0.3 alpha:1.0]];
+  } else {
 	[colorSettingTableView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorBackgroundColor]]];
+    [colorSettingTableViewDarkMode setEnabled:false];
+  }
 }
 
 #pragma mark -
@@ -328,6 +339,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 	[colorSettingTableView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorBackgroundColor]]];
 	[colorSettingTableView reloadData];
+  [colorSettingTableViewDarkMode reloadData];
 	
 	[self updateDisplayColorThemeName];
 }
@@ -356,6 +368,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
   NSFont *font = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorFont]];
   [editorFontName setFont:font];
   [colorSettingTableView reloadData];
+  [colorSettingTableViewDarkMode reloadData];
 }
 
 - (IBAction)delayStepperChanged:(id)sender {
@@ -482,6 +495,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 	[panel setColor:[NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:[editorColors objectAtIndex:colorRow]]]];
 	
 	[colorSettingTableView deselectAll:nil];
+  [colorSettingTableViewDarkMode deselectAll:nil];
 	
 	[panel makeKeyAndOrderFront:self];
 }
@@ -497,9 +511,11 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 	if ([[editorColors objectAtIndex:colorRow] isEqualTo:SPCustomQueryEditorBackgroundColor]) {
 		[colorSettingTableView setBackgroundColor:[sender color]];
+    [colorSettingTableViewDarkMode setBackgroundColor:[sender color]];
 	}
 
 	[colorSettingTableView reloadData];
+  [colorSettingTableViewDarkMode reloadData];
 
 	[prefs setObject:SPCustomColorSchemeName forKey:SPCustomQueryEditorThemeName];
 	
@@ -519,7 +535,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-	if (tableView == colorSettingTableView) {
+  if (tableView == colorSettingTableView || tableView == colorSettingTableViewDarkMode) {
 		return [editorColors count];
 	}
 	else if (tableView == editThemeListTable) {
@@ -531,7 +547,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex
 {
-	if (tableView == colorSettingTableView) {
+	if (tableView == colorSettingTableView || tableView == colorSettingTableViewDarkMode) {
 		return ([[tableColumn identifier] isEqualToString:@"name"]) ? [editorNameForColors objectAtIndex:rowIndex] : [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:[editorColors objectAtIndex:rowIndex]]];
 	} 
 	else if (tableView == editThemeListTable) {
@@ -593,7 +609,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 - (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
-	if(aTableView == colorSettingTableView) {
+  if(aTableView == colorSettingTableView || aTableView == colorSettingTableViewDarkMode) {
 		
 		NSColorPanel* panel;
 		
@@ -604,6 +620,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 		[panel setAction:@selector(colorChanged:)];
 		[panel setColor:[NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:[editorColors objectAtIndex:colorRow]]]];
 		[colorSettingTableView deselectAll:nil];
+    [colorSettingTableViewDarkMode deselectAll:nil];
 		[panel makeKeyAndOrderFront:self];
 		
 		return NO;
@@ -614,7 +631,10 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 - (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)index
 {
-	if (tableView == colorSettingTableView && [[tableColumn identifier] isEqualToString:@"name"]) {
+  if (
+      (tableView == colorSettingTableView || tableView == colorSettingTableViewDarkMode)
+      && [[tableColumn identifier] isEqualToString:@"name"]
+  ) {
 		if ([cell isKindOfClass:[NSTextFieldCell class]]) {
 			[cell setDrawsBackground:YES];
 			
@@ -997,6 +1017,7 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 	if( actuallyLoaded > 0) {
 		[colorSettingTableView setBackgroundColor:[NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorBackgroundColor]]];
 		[colorSettingTableView reloadData];
+    [colorSettingTableViewDarkMode reloadData];
 	} else {
 		[NSAlert createWarningAlertWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Error while reading data file", @"error while reading data file")] message:NSLocalizedString(@"No color theme data found.", @"error that no color theme found") callback:nil];
 		return NO;
