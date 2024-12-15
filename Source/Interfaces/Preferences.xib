@@ -41,8 +41,8 @@
         </customObject>
         <customObject id="2144" userLabel="Editor" customClass="SPEditorPreferencePane">
             <connections>
+                <outlet property="colorSettingDarkModeTableView" destination="J5y-ix-ZdH" id="2182"/>
                 <outlet property="colorSettingTableView" destination="1685" id="2171"/>
-                <outlet property="colorSettingTableViewDarkMode" destination="J5y-ix-ZdH" id="2182"/>
                 <outlet property="colorThemeName" destination="1740" id="2161"/>
                 <outlet property="colorThemeNameLabel" destination="1738" id="2160"/>
                 <outlet property="duplicateThemeButton" destination="2253" id="2261"/>
@@ -1773,7 +1773,7 @@ Warning: If Sequel Ace and the server do not have at least one cipher suite in c
             </constraints>
             <point key="canvasLocation" x="732" y="551"/>
         </customView>
-        <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="802" userLabel="Editor">
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="802" userLabel="Editor">
             <rect key="frame" x="0.0" y="0.0" width="656" height="504"/>
             <userGuides>
                 <userLayoutGuide location="147" affinity="minX"/>
@@ -2335,7 +2335,7 @@ Warning: If Sequel Ace and the server do not have at least one cipher suite in c
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="0UN-0a-TlO">
                                             <rect key="frame" x="1" y="1" width="338" height="328"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="fullWidth" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" id="J5y-ix-ZdH">
                                                     <rect key="frame" x="0.0" y="0.0" width="338" height="328"/>

@@ -175,6 +175,7 @@ NSString *SPCustomQueryEditorVariableColor       = @"CustomQueryEditorVariableCo
 NSString *SPCustomQueryEditorHighlightQueryColor = @"CustomQueryEditorHighlightQueryColor";
 NSString *SPCustomQueryEditorSelectionColor      = @"CustomQueryEditorSelectionColor";
 
+// Editor colors - Dark mode (macOS 10.14 and newer)
 NSString *SPCustomQueryEditorDarkModeTextColor           = @"CustomQueryEditorDarkModeTextColor";
 NSString *SPCustomQueryEditorDarkModeBackgroundColor     = @"CustomQueryEditorDarkModeBackgroundColor";
 NSString *SPCustomQueryEditorDarkModeCaretColor          = @"CustomQueryEditorDarkModeCaretColor";
