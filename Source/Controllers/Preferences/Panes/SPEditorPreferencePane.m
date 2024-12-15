@@ -803,104 +803,61 @@ static NSString *SPCustomColorSchemeNameLC  = @"user-defined";
 
 - (void)_saveColorThemeAtPath:(NSString *)path
 {
-	// Build plist dictionary
-	NSMutableDictionary *scheme = [NSMutableDictionary dictionary];
-	NSMutableDictionary *mainsettings = [NSMutableDictionary dictionary];
-	NSMutableArray *settings = [NSMutableArray array];
-			
-	NSColor *aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorBackgroundColor]];
-	[mainsettings setObject:[aColor rgbHexString] forKey:@"background"];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorCaretColor]];
-	[mainsettings setObject:[aColor rgbHexString] forKey:@"caret"];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorTextColor]];
-	[mainsettings setObject:[aColor rgbHexString] forKey:@"foreground"];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorHighlightQueryColor]];
-	[mainsettings setObject:[aColor rgbHexString] forKey:@"lineHighlight"];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorSelectionColor]];
-	[mainsettings setObject:[aColor rgbHexString] forKey:@"selection"];
-	
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:mainsettings, @"settings", nil]];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorCommentColor]];
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						 @"Comment", @"name",
-						 [NSDictionary dictionaryWithObjectsAndKeys:
-						  [aColor rgbHexString], @"foreground",
-						  nil
-						  ], @"settings",
-						 nil
-						 ]];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorQuoteColor]];
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						 @"String", @"name",
-						 [NSDictionary dictionaryWithObjectsAndKeys:
-						  [aColor rgbHexString], @"foreground",
-						  nil
-						  ], @"settings",
-						 nil
-						 ]];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorSQLKeywordColor]];
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						 @"Keyword", @"name",
-						 [NSDictionary dictionaryWithObjectsAndKeys:
-						  [aColor rgbHexString], @"foreground",
-						  nil
-						  ], @"settings",
-						 nil
-						 ]];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorBacktickColor]];
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						 @"User-defined constant", @"name",
-						 [NSDictionary dictionaryWithObjectsAndKeys:
-						  [aColor rgbHexString], @"foreground",
-						  nil
-						  ], @"settings",
-						 nil
-						 ]];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorNumericColor]];
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						 @"Number", @"name",
-						 [NSDictionary dictionaryWithObjectsAndKeys:
-						  [aColor rgbHexString], @"foreground",
-						  nil
-						  ], @"settings",
-						 nil
-						 ]];
-	
-	aColor = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:SPCustomQueryEditorVariableColor]];
-	[settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-						 @"Variable", @"name",
-						 [NSDictionary dictionaryWithObjectsAndKeys:
-						  [aColor rgbHexString], @"foreground",
-						  nil
-						  ], @"settings",
-						 nil
-						 ]];
-	
-	[scheme setObject:settings forKey:@"settings"];
-	
-	NSError *error = nil;
-	NSData *plist = [NSPropertyListSerialization dataWithPropertyList:scheme
-	                                                           format:NSPropertyListXMLFormat_v1_0
-	                                                          options:0
-	                                                            error:&error];
-	
-	if (error) {
-		[NSAlert createWarningAlertWithTitle:NSLocalizedString(@"Error while converting color scheme data", @"error while converting color scheme data") message:[error localizedDescription] callback:nil];
-		return;
-	}
-	
-	[plist writeToFile:path options:NSAtomicWrite error:&error];
-	
-	if (error) [[NSAlert alertWithError:error] runModal];
+  // Build plist dictionary
+  NSMutableDictionary *scheme = [NSMutableDictionary dictionary];
+  NSMutableDictionary *mainsettings = [NSMutableDictionary dictionary];
+  NSMutableArray *settings = [NSMutableArray array];
+  
+  NSDictionary *requiredMapColorKeys = @{
+    SPCustomQueryEditorBackgroundColor: @"background",
+    SPCustomQueryEditorCaretColor: @"caret",
+    SPCustomQueryEditorTextColor: @"foreground",
+    SPCustomQueryEditorHighlightQueryColor: @"lineHighlight",
+    SPCustomQueryEditorSelectionColor: @"selection",
+  };
+
+  for (NSString *colorKey in requiredMapColorKeys) {
+    NSString *settingKey = requiredMapColorKeys[colorKey];
+    NSColor *color = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:colorKey]];
+    [mainsettings setObject:[color rgbHexString] forKey:settingKey];
+  }
+  
+  // Store all required color settings in a dictionary
+  [settings addObject:[NSDictionary dictionaryWithObjectsAndKeys:mainsettings, @"settings", nil]];
+  
+  NSDictionary *optionalMapColorKeys = @{
+    SPCustomQueryEditorCommentColor: @"Comment",
+    SPCustomQueryEditorQuoteColor: @"String",
+    SPCustomQueryEditorSQLKeywordColor: @"Keyword",
+    SPCustomQueryEditorBacktickColor: @"User-defined constant",
+  };
+  
+  for (NSString *colorKey in optionalMapColorKeys) {
+    NSString *settingKey = optionalMapColorKeys[colorKey];
+    NSColor *color = [NSUnarchiver unarchiveObjectWithData:[prefs dataForKey:colorKey]];
+    [settings addObject:[NSDictionary
+                         dictionaryWithObjectsAndKeys:settingKey,
+                         @"name",
+                         [NSDictionary dictionaryWithObjectsAndKeys:[color rgbHexString], @"foreground", nil], @"settings", nil]
+    ];
+  }
+  
+  [scheme setObject:settings forKey:@"settings"];
+  
+  NSError *error = nil;
+  NSData *plist = [NSPropertyListSerialization dataWithPropertyList:scheme
+                                                             format:NSPropertyListXMLFormat_v1_0
+                                                            options:0
+                                                              error:&error];
+  
+  if (error) {
+    [NSAlert createWarningAlertWithTitle:NSLocalizedString(@"Error while converting color scheme data", @"error while converting color scheme data") message:[error localizedDescription] callback:nil];
+    return;
+  }
+  
+  [plist writeToFile:path options:NSAtomicWrite error:&error];
+  
+  if (error) [[NSAlert alertWithError:error] runModal];
 }
 
 - (BOOL)_loadColorSchemeFromFile:(NSString *)filename
