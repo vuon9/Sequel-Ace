@@ -119,6 +119,12 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 @synthesize taskCount;
 @synthesize completionFuzzyMode;
 
+struct colorSettingItem {
+  NSString *p;
+  NSString *pD;
+  SEL m;
+};
+
 - (void) awakeFromNib
 {
     [super awakeFromNib];
@@ -132,7 +138,7 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 	// Set defaults for general usage
 	autoindentEnabled = NO;
 	autopairEnabled = YES;
-    autocompleteEnabled = NO;
+  autocompleteEnabled = NO;
 	autoindentIgnoresEnter = NO;
 	autouppercaseKeywordsEnabled = NO;
 	autohelpEnabled = NO;
@@ -144,11 +150,11 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 	completionIsOpen = NO;
 	isProcessingMirroredSnippets = NO;
 	completionWasRefreshed = NO;
-    completionFuzzyMode = NO; // not for the value from prefs
-    self.usesFontPanel = NO;
+  completionFuzzyMode = NO; // not for the value from prefs
+  self.usesFontPanel = NO;
 
-    // keep track of tasks we start and stop, otherwise we get an assert error
-    taskCount = 0;
+  // keep track of tasks we start and stop, otherwise we get an assert error
+  taskCount = 0;
 
 	lineNumberView = [[NoodleLineNumberView alloc] initWithScrollView:scrollView];
 	[scrollView setVerticalRulerView:lineNumberView];
@@ -170,77 +176,48 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 
 	// disabled to get the current text range in textView safer
 	[[self layoutManager] setBackgroundLayoutEnabled:NO];
-
-	{
-		struct csItem {
-			NSString *p;
-			SEL m;
-		} colorSetup[] = {
-			{ .p = SPCustomQueryEditorHighlightQueryColor, .m = @selector(setQueryHiliteColor:) },
-			{ .p = SPCustomQueryEditorBackgroundColor,     .m = @selector(setQueryEditorBackgroundColor:) },
-			{ .p = SPCustomQueryEditorBackgroundColor,     .m = @selector(setBackgroundColor:) },
-			{ .p = SPCustomQueryEditorCommentColor,        .m = @selector(setCommentColor:) },
-			{ .p = SPCustomQueryEditorQuoteColor,          .m = @selector(setQuoteColor:) },
-			{ .p = SPCustomQueryEditorSQLKeywordColor,     .m = @selector(setKeywordColor:) },
-			{ .p = SPCustomQueryEditorBacktickColor,       .m = @selector(setBacktickColor:) },
-			{ .p = SPCustomQueryEditorNumericColor,        .m = @selector(setNumericColor:) },
-			{ .p = SPCustomQueryEditorVariableColor,       .m = @selector(setVariableColor:) },
-			{ .p = SPCustomQueryEditorTextColor,           .m = @selector(setOtherTextColor:) },
-			{ .p = SPCustomQueryEditorTextColor,           .m = @selector(setTextColor:) },
-			{ .p = SPCustomQueryEditorCaretColor,          .m = @selector(setInsertionPointColor:) },
-			{ .p = SPCustomQueryEditorSelectionColor,      .m = @selector(_setTextSelectionColor:) },
-			{ .p = nil, .m = NULL } // stop key
-		};
-		
-		struct csItem *item = &colorSetup[0];
-		
-		NSDictionary *vendorDefaults = [prefs volatileDomainForName:NSRegistrationDomain]; //prefs from -registerDefaults: in app controller
-
-		do {
-			NSData *colorData = [prefs dataForKey:item->p];
-			NSColor *color;
-			BOOL canRetry = YES;
-		retry:
-			if(colorData && (color = [NSUnarchiver unarchiveObjectWithData:colorData])) {
-				[self performSelector:item->m withObject:color];
-			}
-			else if(canRetry) {
-				// #2963: previous versions of SP would accept invalid data (resulting in `nil`) and store it in prefs,
-				//        so if loading failed use the default color instead (`nil` would cause exceptions later on)
-				colorData = [vendorDefaults objectForKey:item->p];
-				canRetry = NO;
-				SPLog(@"user defaults contains invalid value for theme color '%@'! (retrying with default value)", item->p);
-				goto retry;
-			}
-		} while((++item)->p);
-	}
-
-	[self setEnableSyntaxHighlighting:[prefs boolForKey:SPCustomQueryEnableSyntaxHighlighting]];
-	
-	[self setShouldHiliteQuery:[prefs boolForKey:SPCustomQueryHighlightCurrentQuery]];
-
-	[self setAutomaticDashSubstitutionEnabled:NO];  // prevents -- from becoming —, the em dash.
-	[self setAutomaticQuoteSubstitutionEnabled:NO]; // prevents ' and " from becoming ‘, ’ and “, ” respectively.
-
-	// Register observers for the when editor colors preference changes
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorSelectionColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorCaretColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorFont options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorBackgroundColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorHighlightQueryColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryHighlightCurrentQuery options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEnableSyntaxHighlighting options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorCommentColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorQuoteColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorSQLKeywordColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorBacktickColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorNumericColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorVariableColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorTextColor options:NSKeyValueObservingOptionNew context:NULL];
-	[prefs addObserver:self forKeyPath:SPCustomQueryEditorTabStopWidth options:NSKeyValueObservingOptionNew context:NULL];
-    [prefs addObserver:self forKeyPath:SPCustomQueryAutoUppercaseKeywords options:NSKeyValueObservingOptionNew context:NULL];
-    [prefs addObserver:self forKeyPath:SPCustomQueryAutoIndent options:NSKeyValueObservingOptionNew context:NULL];
-    [prefs addObserver:self forKeyPath:SPCustomQueryAutoComplete options:NSKeyValueObservingOptionNew context:NULL];
+  
+  [self changeColors];
+  
+  [self setAutomaticDashSubstitutionEnabled:NO];  // prevents -- from becoming —, the em dash.
+  [self setAutomaticQuoteSubstitutionEnabled:NO]; // prevents ' and " from becoming ‘, ’ and “, ” respectively.
+  
+  // Register observers for the when editor colors preference changes
+  [prefs addObserver:self forKeyPath:SPAppearance options:NSKeyValueObservingOptionNew context:nil];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorFont options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryHighlightCurrentQuery options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEnableSyntaxHighlighting options:NSKeyValueObservingOptionNew context:NULL];
+  
+  // Default mode
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorSelectionColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorCaretColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorBackgroundColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorHighlightQueryColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorCommentColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorQuoteColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorSQLKeywordColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorBacktickColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorNumericColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorVariableColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorTextColor options:NSKeyValueObservingOptionNew context:NULL];
+  
+  // Dark mode
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeSelectionColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeCaretColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeBackgroundColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeHighlightQueryColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeCommentColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeQuoteColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeSQLKeywordColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeBacktickColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeNumericColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeVariableColor options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorDarkModeTextColor options:NSKeyValueObservingOptionNew context:NULL];
+  
+  [prefs addObserver:self forKeyPath:SPCustomQueryEditorTabStopWidth options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryAutoUppercaseKeywords options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryAutoIndent options:NSKeyValueObservingOptionNew context:NULL];
+  [prefs addObserver:self forKeyPath:SPCustomQueryAutoComplete options:NSKeyValueObservingOptionNew context:NULL];
 }
 
 - (void) setConnection:(SPMySQLConnection *)theConnection withVersion:(NSInteger)majorVersion
@@ -249,11 +226,135 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 	mySQLmajorVersion = majorVersion;
 }
 
+- (void) changeColors {
+  struct colorSettingItem colorSetup[] = {
+    {
+      .p = SPCustomQueryEditorHighlightQueryColor,
+      .pD = SPCustomQueryEditorDarkModeHighlightQueryColor,
+      .m = @selector(setQueryHiliteColor:),
+    },
+    {
+      .p = SPCustomQueryEditorBackgroundColor,
+      .pD = SPCustomQueryEditorDarkModeBackgroundColor,
+      .m = @selector(setQueryEditorBackgroundColor:),
+    },
+    {
+      .p = SPCustomQueryEditorBackgroundColor,
+      .pD = SPCustomQueryEditorDarkModeBackgroundColor,
+      .m = @selector(setBackgroundColor:),
+    },
+    {
+      .p = SPCustomQueryEditorCommentColor,
+      .pD = SPCustomQueryEditorDarkModeCommentColor,
+      .m = @selector(setCommentColor:),
+    },
+    {
+      .p = SPCustomQueryEditorQuoteColor,
+      .pD = SPCustomQueryEditorDarkModeQuoteColor,
+      .m = @selector(setQuoteColor:),
+    },
+    {
+      .p = SPCustomQueryEditorSQLKeywordColor,
+      .pD = SPCustomQueryEditorDarkModeSQLKeywordColor,
+      .m = @selector(setKeywordColor:),
+    },
+    {
+      .p = SPCustomQueryEditorBacktickColor,
+      .pD = SPCustomQueryEditorDarkModeBacktickColor,
+      .m = @selector(setBacktickColor:),
+    },
+    {
+      .p = SPCustomQueryEditorNumericColor,
+      .pD = SPCustomQueryEditorDarkModeNumericColor,
+      .m = @selector(setNumericColor:),
+    },
+    {
+      .p = SPCustomQueryEditorVariableColor,
+      .pD = SPCustomQueryEditorDarkModeVariableColor,
+      .m = @selector(setVariableColor:),
+    },
+    {
+      .p = SPCustomQueryEditorTextColor,
+      .pD = SPCustomQueryEditorDarkModeTextColor,
+      .m = @selector(setOtherTextColor:),
+    },
+    {
+      .p = SPCustomQueryEditorTextColor,
+      .pD = SPCustomQueryEditorDarkModeTextColor,
+      .m = @selector(setTextColor:),
+    },
+    {
+      .p = SPCustomQueryEditorCaretColor,
+      .pD = SPCustomQueryEditorDarkModeCaretColor,
+      .m = @selector(setInsertionPointColor:),
+    },
+    {
+      .p = SPCustomQueryEditorSelectionColor,
+      .pD = SPCustomQueryEditorDarkModeSelectionColor,
+      .m = @selector(_setTextSelectionColor:),
+    },
+    {
+      .p = nil,
+      .pD = nil,
+      .m = NULL
+    } // stop key
+  };
+  
+  struct colorSettingItem *item = &colorSetup[0];
+  
+  NSDictionary *vendorDefaults = [prefs volatileDomainForName:NSRegistrationDomain]; //prefs from -registerDefaults: in app controller
+  BOOL isInDarkMode = [self isInDarkMode];
+  
+  do {
+    NSData *colorData = isInDarkMode ? [prefs dataForKey:item->pD] : [prefs dataForKey:item->p];
+    NSColor *color;
+    BOOL canRetry = YES;
+  retry:
+    SPLog(@"Changing colors for text editor");
+    if(colorData && (color = [NSUnarchiver unarchiveObjectWithData:colorData])) {
+      [self performSelector:item->m withObject:color afterDelay:0.0];
+    }
+    else if(canRetry) {
+      // #2963: previous versions of SP would accept invalid data (resulting in `nil`) and store it in prefs,
+      //        so if loading failed use the default color instead (`nil` would cause exceptions later on)
+      colorData = isInDarkMode ? [vendorDefaults objectForKey:item->pD] : [vendorDefaults objectForKey:item->p];
+      canRetry = NO;
+      SPLog(@"user defaults contains invalid value for theme color '%@'! (retrying with default value)", item->p);
+      goto retry;
+    }
+  } while((++item)->p);
+  
+  
+  [self setEnableSyntaxHighlighting:[prefs boolForKey:SPCustomQueryEnableSyntaxHighlighting]];
+  [self setShouldHiliteQuery:[prefs boolForKey:SPCustomQueryHighlightCurrentQuery]];
+}
+
+- (BOOL) isInDarkMode {
+  if (@available(macOS 10.14, *)) {
+    NSInteger appearance = [[NSUserDefaults standardUserDefaults] integerForKey:SPAppearance];
+    if (appearance == 1) {
+      return NO;
+    } else if (appearance == 2) {
+      return YES;
+    }
+    
+    return [[NSApp appearance] name] == NSAppearanceNameDarkAqua;
+  }
+  
+  return NO;
+}
+
 /**
  * This method is called as part of Key Value Observing which is used to watch for prefernce changes which effect the interface.
  */
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-	if ([keyPath isEqualToString:SPCustomQueryEditorBackgroundColor]) {
+  if ([keyPath isEqualToString:SPAppearance]) {
+    SPLog(@"Appearance has been changed");
+    [self changeColors];
+    if ([self isEditable]) {
+      [self doSyntaxHighlightingWithForceWrapper:keyPath];
+    }
+  } else if ([keyPath isEqualToString:SPCustomQueryEditorBackgroundColor]) {
 		NSColor *backgroundColor = [NSUnarchiver unarchiveObjectWithData:[change objectForKey:NSKeyValueChangeNewKey]];
 		[self setQueryEditorBackgroundColor:backgroundColor];
 		[self setBackgroundColor:backgroundColor];
@@ -277,7 +378,7 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 	} else if ([keyPath isEqualToString:SPCustomQueryEnableSyntaxHighlighting]) {
 		[self setEnableSyntaxHighlighting:[[change objectForKey:NSKeyValueChangeNewKey] boolValue]];
 		[self setNeedsDisplayInRect:[self bounds]];
-        [self doSyntaxHighlightingWithForceWrapper:keyPath];
+    [self doSyntaxHighlightingWithForceWrapper:keyPath];
 	} else if ([keyPath isEqualToString:SPCustomQueryEditorCommentColor]) {
 		[self setCommentColor:[NSUnarchiver unarchiveObjectWithData:[change objectForKey:NSKeyValueChangeNewKey]]];
 		if ([self isEditable]) {
@@ -318,14 +419,14 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 		[self setTabStops];
 	} else if ([keyPath isEqualToString:SPCustomQueryAutoUppercaseKeywords]) {
         [self setAutouppercaseKeywords:[prefs boolForKey:SPCustomQueryAutoUppercaseKeywords]];
-    } else if ([keyPath isEqualToString:SPCustomQueryAutoIndent]) {
-        [self setAutoindent:[prefs boolForKey:SPCustomQueryAutoIndent]];
-    } else if ([keyPath isEqualToString:SPCustomQueryAutoComplete]) {
-        [self setAutoComplete:[prefs boolForKey:SPCustomQueryAutoComplete]];
-    }
-    else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
+  } else if ([keyPath isEqualToString:SPCustomQueryAutoIndent]) {
+      [self setAutoindent:[prefs boolForKey:SPCustomQueryAutoIndent]];
+  } else if ([keyPath isEqualToString:SPCustomQueryAutoComplete]) {
+      [self setAutoComplete:[prefs boolForKey:SPCustomQueryAutoComplete]];
+  }
+  else {
+      [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  }
 }
 
 - (void)doSyntaxHighlightingWithForceWrapper:(NSString*)keyPath{
@@ -3670,13 +3771,15 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 
 	// Remove observers
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorSelectionColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorFont];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEnableSyntaxHighlighting];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryHighlightCurrentQuery];
+  
+  // Default mode
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorSelectionColor];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorCaretColor];
-	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorFont];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorBackgroundColor];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorHighlightQueryColor];
-	[prefs removeObserver:self forKeyPath:SPCustomQueryHighlightCurrentQuery];
-	[prefs removeObserver:self forKeyPath:SPCustomQueryEnableSyntaxHighlighting];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorCommentColor];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorQuoteColor];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorSQLKeywordColor];
@@ -3684,10 +3787,24 @@ static inline NSPoint SPPointOnLine(NSPoint a, NSPoint b, CGFloat t) { return NS
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorNumericColor];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorVariableColor];
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorTextColor];
+  
+  // Dark mode
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeSelectionColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeCaretColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeBackgroundColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeHighlightQueryColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeCommentColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeQuoteColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeSQLKeywordColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeBacktickColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeNumericColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeVariableColor];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryEditorDarkModeTextColor];
+  
 	[prefs removeObserver:self forKeyPath:SPCustomQueryEditorTabStopWidth];
-    [prefs removeObserver:self forKeyPath:SPCustomQueryAutoUppercaseKeywords];
-    [prefs removeObserver:self forKeyPath:SPCustomQueryAutoIndent];
-    [prefs removeObserver:self forKeyPath:SPCustomQueryAutoComplete];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryAutoUppercaseKeywords];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryAutoIndent];
+  [prefs removeObserver:self forKeyPath:SPCustomQueryAutoComplete];
 
 	if (completionIsOpen) (void)([completionPopup close]), completionIsOpen = NO;
 }
