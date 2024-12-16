@@ -65,30 +65,52 @@
 	<false/>
 	<key>CustomQueryEditorBackgroundColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>
+	<key>CustomQueryEditorDarkModeBackgroundColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmgzqlCj6DBeYZPoOAbio+AYY=</data>
 	<key>CustomQueryEditorBacktickColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAACDqagoPwGG</data>
+	<key>CustomQueryEditorDarkModeBacktickColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg5DkfT+DprEVP4NJUQs9AYY=</data>
 	<key>CustomQueryEditorCaretColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
+	<key>CustomQueryEditorDarkModeCaretColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg5J6Xz6Dj42OPoNxt6Y+AYY=</data>
 	<key>CustomQueryEditorCommentColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAIPp6Og+AAGG</data>
+	<key>CustomQueryEditorDarkModeCommentColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg4h01T6D7hxFP4ObOOQ+AYY=</data>
 	<key>CustomQueryEditorFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDoQBYwCYAZgAmACG</data>
 	<key>CustomQueryEditorHighlightQueryColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMChARmZmZmgzMzcz+DMzNzP4MzM3M/AYY=</data>
+	<key>CustomQueryEditorDarkModeHighlightQueryColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmgwyvJz6DsuI6PoOKuU8+AYY=</data>
 	<key>CustomQueryEditorNumericColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg4GAAD+Dh4aGPgABhg==</data>
+	<key>CustomQueryEditorDarkModeNumericColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg3o2Xj+DKN74PoOxmuU8AYY=</data>
 	<key>CustomQueryEditorQuoteColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg8bFRT+DnXPOPYNba609AYY=</data>
+	<key>CustomQueryEditorDarkModeQuoteColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg5DkfT+DprEVP4NJUQs9AYY=</data>
 	<key>CustomQueryEditorSelectionColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMChARmZmZmg7a1NT+D1tVVPwEBhg==</data>
+	<key>CustomQueryEditorDarkModeSelectionColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg5J6Xz6Dj42OPoNxt6Y+AYY=</data>
 	<key>CustomQueryEditorSQLKeywordColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg83MTD6DnXPOPQEBhg==</data>
+	<key>CustomQueryEditorDarkModeSQLKeywordColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg1tGLz2D35LGPoOalX8/AYY=</data>
 	<key>CustomQueryEditorTabStopWidth</key>
 	<integer>4</integer>
 	<key>CustomQueryEditorTextColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
+	<key>CustomQueryEditorDarkModeTextColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg8Tzbz+DxPNvP4PE828/AYY=</data>
 	<key>CustomQueryEditorVariableColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg3zv/T6DfO/9PoN87/0+AYY=</data>
+	<key>CustomQueryEditorDarkModeVariableColor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmgwe8bj+Di3w0P4MfjQw9AYY=</data>
 	<key>CustomQueryFunctionCompletionInsertsArguments</key>
 	<true/>
 	<key>CustomQueryHighlightCurrentQuery</key>

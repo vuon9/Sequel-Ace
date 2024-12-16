@@ -161,6 +161,8 @@ NSString *SPKeepAliveInterval                    = @"KeepAliveInterval";
 // Editor Prefpane
 NSString *SPCustomQueryEnableSyntaxHighlighting  = @"CustomQueryEnableSyntaxHighlighting";
 NSString *SPCustomQueryEditorFont                = @"CustomQueryEditorFont";
+
+// Editor colors - Light mode (default)
 NSString *SPCustomQueryEditorTextColor           = @"CustomQueryEditorTextColor";
 NSString *SPCustomQueryEditorBackgroundColor     = @"CustomQueryEditorBackgroundColor";
 NSString *SPCustomQueryEditorCaretColor          = @"CustomQueryEditorCaretColor";
@@ -172,6 +174,20 @@ NSString *SPCustomQueryEditorBacktickColor       = @"CustomQueryEditorBacktickCo
 NSString *SPCustomQueryEditorVariableColor       = @"CustomQueryEditorVariableColor";
 NSString *SPCustomQueryEditorHighlightQueryColor = @"CustomQueryEditorHighlightQueryColor";
 NSString *SPCustomQueryEditorSelectionColor      = @"CustomQueryEditorSelectionColor";
+
+// Editor colors - Dark mode (macOS 10.14 and newer)
+NSString *SPCustomQueryEditorDarkModeTextColor           = @"CustomQueryEditorDarkModeTextColor";
+NSString *SPCustomQueryEditorDarkModeBackgroundColor     = @"CustomQueryEditorDarkModeBackgroundColor";
+NSString *SPCustomQueryEditorDarkModeCaretColor          = @"CustomQueryEditorDarkModeCaretColor";
+NSString *SPCustomQueryEditorDarkModeCommentColor        = @"CustomQueryEditorDarkModeCommentColor";
+NSString *SPCustomQueryEditorDarkModeSQLKeywordColor     = @"CustomQueryEditorDarkModeSQLKeywordColor";
+NSString *SPCustomQueryEditorDarkModeNumericColor        = @"CustomQueryEditorDarkModeNumericColor";
+NSString *SPCustomQueryEditorDarkModeQuoteColor          = @"CustomQueryEditorDarkModeQuoteColor";
+NSString *SPCustomQueryEditorDarkModeBacktickColor       = @"CustomQueryEditorDarkModeBacktickColor";
+NSString *SPCustomQueryEditorDarkModeVariableColor       = @"CustomQueryEditorDarkModeVariableColor";
+NSString *SPCustomQueryEditorDarkModeHighlightQueryColor = @"CustomQueryEditorDarkModeHighlightQueryColor";
+NSString *SPCustomQueryEditorDarkModeSelectionColor      = @"CustomQueryEditorDarkModeSelectionColor";
+
 NSString *SPCustomQueryAutoIndent                = @"CustomQueryAutoIndent";
 NSString *SPCustomQueryAutoPairCharacters        = @"CustomQueryAutoPairCharacters";
 NSString *SPCustomQueryAutoUppercaseKeywords     = @"CustomQueryAutoUppercaseKeywords";
