@@ -106,6 +106,8 @@ typedef struct {
 	BOOL enableSyntaxHighlighting;
 
 	BOOL syntaxHighlightingApplied;
+  NSArray *lightModeColorKeys;
+  NSArray *darkModeColorKeys;
 }
 
 @property (strong) NSColor* queryHiliteColor;
