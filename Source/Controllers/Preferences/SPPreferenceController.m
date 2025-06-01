@@ -109,8 +109,13 @@
 			}
 		}
 	}
-	
-	[[self window] setMinSize:NSMakeSize(500, 450)];
+
+	CGFloat minWidthWindow = 700;
+	CGFloat minHeightContent = 526;
+	CGFloat minHeightTopBar = 85;
+  
+	[[self window] setMinSize:NSMakeSize(minWidthWindow, minHeightContent + minHeightTopBar)];
+	[[self window] setContentMinSize:NSMakeSize(minWidthWindow, minHeightContent)];
 	[[self window] setShowsResizeIndicator:YES];
 	
 	[toolbar setSelectedItemIdentifier:[preferencePane preferencePaneIdentifier]];
@@ -233,9 +238,6 @@
  */
 - (void)_resizeWindowForContentView:(NSView *)view
 {
-	// Handle expanding
-	[[self window] resizeForContentView:view];
-
 	// Add view
 	[self window].contentView = view;
 
