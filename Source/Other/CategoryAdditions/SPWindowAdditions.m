@@ -46,21 +46,21 @@
 	}
 
 	NSSize viewSize = view.fittingSize;
-	NSRect frame    = [self frame];
+	NSRect frame = [self frame];
 
-	if(viewSize.height < [self contentMinSize].height) {
-		viewSize.height = [self contentMinSize].height;
-	}
-	if(viewSize.width < [self contentMinSize].width) {
-		viewSize.width = [self contentMinSize].width;
-	}
+	viewSize.height = MAX(viewSize.height, [self contentMinSize].height);
+	viewSize.width = MAX(viewSize.width, [self contentMinSize].width);
 
 	CGFloat newHeight = viewSize.height + (self.frame.size.height - self.contentView.frame.size.height);
-	frame.origin.y += frame.size.height - newHeight;
 
 	frame.size.height = MAX(newHeight, [self minSize].height);
 	//If width is bigger, keep it the same for consistency
 	frame.size.width  = MAX(MAX(self.contentView.frame.size.width, viewSize.width + (self.frame.size.width - self.contentView.frame.size.width)), [self minSize].width);
+  
+  // Based on mainscreen frame to centralize the current window
+  NSRect screenFrame = [[NSScreen mainScreen] frame];
+  frame.origin.x = (screenFrame.size.width - frame.size.width) / 2;
+  frame.origin.y = (screenFrame.size.height - frame.size.height) / 2;
 
 	[self setFrame:frame display:YES animate:YES];
 }

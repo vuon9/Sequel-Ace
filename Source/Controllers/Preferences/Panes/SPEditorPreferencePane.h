@@ -56,9 +56,11 @@
 	IBOutlet NSMenuItem *saveThemeMenuItem;
 	
 	IBOutlet NSTableView *colorSettingTableView;
+	IBOutlet NSTableView *colorSettingDarkModeTableView;
 	IBOutlet NSMenu *themeSelectionMenu;
 	
 	NSArray *editorColors;
+	NSArray *editorDarkModeColors;
 	NSArray *editorNameForColors;
 	NSUInteger colorRow;
 	
